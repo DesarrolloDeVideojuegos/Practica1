@@ -16,7 +16,6 @@ var MemoryGame = MemoryGame || {};
 	this.control = true;
 };
 
-// ademas 
 /** 
  * Función inicializadora, crea las cartas y las asigna a sus posiciones iniciales de forma aleatoria. 
  * Además lanza el bucle para que comience el juego.
