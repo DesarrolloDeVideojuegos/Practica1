@@ -14,6 +14,7 @@ var MemoryGame = MemoryGame || {};
 	this.gs = gs;
 	this.myCard = null;
 	this.control = true;
+	this.cardsFliped = 0;
 };
 
 /** 
@@ -22,9 +23,9 @@ var MemoryGame = MemoryGame || {};
 */
 MemoryGame.prototype.initGame = function(){
 
-	let cardNames = ["8-ball", "potato","dinosaur","kronos","rocket","unicorn","guy","zeppelin"];
+	let cardNames = ["8-ball", "potato","dinosaur","kronos","rocket","unicorn","guy","zeppelin", "8-ball", "potato","dinosaur","kronos","rocket","unicorn","guy","zeppelin"];
 
-	for(let i = 0; i < 16; i++){
+	/*for(let i = 0; i < 16; i++){
 		let random = Math.floor(Math.random() * 16);
 		if(game.cards[random] == undefined){
 			game.cards[random] = new MemoryGameCard(cardNames[Math.floor(i/2)]);
@@ -37,7 +38,20 @@ MemoryGame.prototype.initGame = function(){
 				}
 			}
 		}
+	}*/
+
+	for(let id of cardNames){
+		this.cards.push(new MemoryGameCard(id));
 	}
+	let l = this.cards.length;
+	for(let i = 0; i < 3 * l; i++){
+		let pos1 = Math.floor(Math.random() * l);
+		let pos2 = Math.floor(Math.random() * l);
+		let aux = game.cards[pos1];
+		this.cards[pos1] = game.cards[pos2];
+		this.cards[pos2] = aux;
+	}
+
 	
 	this.loop();
 }
@@ -49,6 +63,8 @@ MemoryGame.prototype.draw = function(){
 	game.gs.drawMessage(game.msg);
 	for(let i = 0; i < 16; i++)
 		game.cards[i].draw(game.gs, i); 
+
+	console.log("Pintandome");
 	
 }
 
@@ -56,6 +72,7 @@ MemoryGame.prototype.draw = function(){
  * Bucle que redibuja el tablero cada 16 ms.
  */
 MemoryGame.prototype.loop = function(){
+	
 	setInterval(this.draw, 16);
 }
 
@@ -65,55 +82,47 @@ MemoryGame.prototype.loop = function(){
  * @param {*} card Recibe la posición de la carta sobre la que se ha clicado.
  */
 MemoryGame.prototype.onClick = function(card){
-	let newCard = game.cards[card];
+	let newCard = this.cards[card];
 
 	//Si se clica fuera, en una carta levantada o sin tener control de juego, se ignora
-	if(newCard == undefined || newCard.state != "reverse" || game.control == false)
+	if(newCard == undefined || newCard.state != "reverse")
+		return;
+	if(this.control == false)
 		return;
 
 	newCard.flip();
 
 	//Si es la primera carta que se levanta, se guarda.
-	if(game.myCard == null){
-		game.myCard = newCard;
+	if(this.myCard == null){
+		this.myCard = newCard;
 		return;
 	//Si es la segunda carta y es igual a la guardada, se marca la pareja como encontrada.
-	}else if(newCard.compareTo(game.myCard)){
+	}else if(newCard.compareTo(this.myCard)){
 		newCard.found();
-		game.myCard.found();
-		game.myCard = null;
+		this.myCard.found();
+		this.myCard = null;
+		this.cardsFliped++;
 
 		//Se comprueba si el juego ha terminado o sigue.
-		if(game.winner()){
-			game.msg = "You win!!";
-			game.control = false;
+		if(this.cardsFliped == 8){
+			this.msg = "You win!!";
+			this.control = false;
 		}else{
-			game.msg = "Match found!!";
+			this.msg = "Match found!!";
 		}
 	//Si es la segunda carta y es distinta a la guardada, se giran las cartas.
 	}else{
-		game.control = false;
-		game.msg = "Try again";
+		this.control = false;
+		this.msg = "Try again";
+		var that = this;
 		setTimeout(function(){
 			newCard.flip();
-			game.myCard.flip();
-			game.myCard = null;	
-			game.control = true;
+			that.myCard.flip();
+			that.myCard = null;	
+			that.control = true;
 		}, 600);		
 	}
 	
-}
-
-/**
- * Función que comprueba si todas las cartas están levantadas y, por lo tanto, el juego ha terminado.
- */
-MemoryGame.prototype.winner = function(){
-	for(let i = 0; i < 16; i++){
-		if(game.cards[i].state == "reverse"){
-			return false;
-		}
-	}
-	return true;
 }
 
 /**
