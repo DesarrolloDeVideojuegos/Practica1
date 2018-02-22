@@ -11,4 +11,4 @@
     Para conseguir dicho objetivo se realizará un pequeño juego web; utilizando un motor ad hoc, creado por los docentes de la UCM, que consistirá  en levantar cartas boca abajo buscando sus parejas.
 
 # Pagina web asociada:
-	[Match the cards](https://desarrollodevideojuegos.github.io/Practica1)
+[Match the cards](https://desarrollodevideojuegos.github.io/Practica1)
