@@ -60,10 +60,9 @@ MemoryGame.prototype.initGame = function(){
  * Dibuja el mensaje del juego y las cartas sobre el tablero.
 */
 MemoryGame.prototype.draw = function(){
-	game.gs.drawMessage(game.msg);
+	this.gs.drawMessage(this.msg);
 	for(let i = 0; i < 16; i++)
-		game.cards[i].draw(game.gs, i); 
-
+		this.cards[i].draw(this.gs, i); 
 	console.log("Pintandome");
 	
 }
@@ -73,7 +72,7 @@ MemoryGame.prototype.draw = function(){
  */
 MemoryGame.prototype.loop = function(){
 	
-	setInterval(this.draw, 16);
+	setInterval(this.draw.bind(this), 16);
 }
 
 /**
